@@ -1,9 +1,12 @@
 package com.example.react_blog.service.implement;
 
+import com.example.react_blog.dto.request.SignInRequestDto;
 import com.example.react_blog.dto.request.SignUpRequestDto;
 import com.example.react_blog.dto.response.ResponseDto;
+import com.example.react_blog.dto.response.auth.SignInResponseDto;
 import com.example.react_blog.dto.response.auth.SignUpResponseDto;
 import com.example.react_blog.entity.UserEntity;
+import com.example.react_blog.provider.JwtProvider;
 import com.example.react_blog.repository.UserRepository;
 import com.example.react_blog.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImplement implements AuthService {
 
     private final UserRepository userRepository;
+    private final JwtProvider jwtProvider;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     //회원가입
@@ -53,7 +57,31 @@ public class AuthServiceImplement implements AuthService {
         return SignUpResponseDto.success();
     }
 
+    //로그인
+    @Override
+    public ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto dto) {
 
+        String token =null;
 
+        try{
+
+            String email = dto.getEmail();
+            UserEntity userEntity = userRepository.findByEmail(email);
+            if (userEntity ==null) return SignInResponseDto.signInFailed();
+
+            String password = dto.getPassword();
+            String encodePassword = userEntity.getPassword();
+            boolean isMatched = passwordEncoder.matches(password,encodePassword);
+            if (!isMatched) return SignInResponseDto.signInFailed();
+
+            token = jwtProvider.create(email);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return SignInResponseDto.success(token);
+    }
 
 }

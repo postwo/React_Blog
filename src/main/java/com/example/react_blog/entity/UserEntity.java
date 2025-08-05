@@ -1,6 +1,6 @@
 package com.example.react_blog.entity;
 
-import com.example.react_blog.dto.request.SignUpRequestDto;
+import com.example.react_blog.dto.request.auth.SignUpRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

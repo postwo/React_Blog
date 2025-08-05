@@ -1,7 +1,7 @@
 package com.example.react_blog.service.implement;
 
-import com.example.react_blog.dto.request.SignInRequestDto;
-import com.example.react_blog.dto.request.SignUpRequestDto;
+import com.example.react_blog.dto.request.auth.SignInRequestDto;
+import com.example.react_blog.dto.request.auth.SignUpRequestDto;
 import com.example.react_blog.dto.response.ResponseDto;
 import com.example.react_blog.dto.response.auth.SignInResponseDto;
 import com.example.react_blog.dto.response.auth.SignUpResponseDto;

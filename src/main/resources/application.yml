@@ -22,3 +22,7 @@ spring:
 
   jwt:
     secret-key: ${key}
+
+  file:
+    path: C:/app사진/
+    url: http://localhost:4000/file/

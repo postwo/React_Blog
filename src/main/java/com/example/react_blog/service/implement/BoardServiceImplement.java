@@ -1,0 +1,60 @@
+package com.example.react_blog.service.implement;
+
+import com.example.react_blog.dto.request.board.PostBoardRequestDto;
+import com.example.react_blog.dto.response.ResponseDto;
+import com.example.react_blog.dto.response.board.PostBoardResponseDto;
+import com.example.react_blog.entity.BoardEntity;
+import com.example.react_blog.entity.ImageEntity;
+import com.example.react_blog.repository.BoardRepository;
+import com.example.react_blog.repository.ImageRepository;
+import com.example.react_blog.repository.UserRepository;
+import com.example.react_blog.service.BoardService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class BoardServiceImplement implements BoardService {
+
+    private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
+    private final ImageRepository imageRepository;
+
+    @Override
+    public ResponseEntity<? super PostBoardResponseDto> postBoard(PostBoardRequestDto dto, String email) {
+
+        try {
+
+            boolean exitedEmail = userRepository.existsByEmail(email);//존재하는지 유저 확인
+            if (!exitedEmail) return PostBoardResponseDto.notExistUser();
+
+            BoardEntity boardEntity = new BoardEntity(dto,email);
+            boardRepository.save(boardEntity); // 게시물 등록
+
+            int boardNumber= boardEntity.getBoardNumber();
+
+            List<String> boardImageList = dto.getBoardImageList();
+            List<ImageEntity> imageEntities = new ArrayList<>();
+
+            //imageentity 에있는 image 컬럼하고 이름 일치
+            for (String image : boardImageList) {
+                ImageEntity imageEntity = new ImageEntity(boardNumber, image);
+                imageEntities.add(imageEntity);
+            }
+
+            // save를 해도 되기는 하는데 너무 한번에 데이터가 넘어가므로 saveAll을 사용
+            imageRepository.saveAll(imageEntities);//게시글 이미지 저장
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return PostBoardResponseDto.success();
+
+    }
+}

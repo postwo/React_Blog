@@ -1,16 +1,14 @@
 package com.example.react_blog.controller;
 
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
+import com.example.react_blog.dto.response.board.GetBoardResponseDto;
 import com.example.react_blog.dto.response.board.PostBoardResponseDto;
 import com.example.react_blog.service.BoardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/board")
@@ -26,6 +24,15 @@ public class BoardController {
             @AuthenticationPrincipal String email
     ){
         ResponseEntity<? super PostBoardResponseDto> response = boardService.postBoard(requestBody, email);
+        return response;
+    }
+
+    //게시글 보기
+    @GetMapping("/{boardNumber}")
+    public ResponseEntity<? super GetBoardResponseDto> getBoard(
+            @PathVariable("boardNumber") Integer boardNumber
+    ){
+        ResponseEntity<? super GetBoardResponseDto> response = boardService.getBoard(boardNumber);
         return response;
     }
 }

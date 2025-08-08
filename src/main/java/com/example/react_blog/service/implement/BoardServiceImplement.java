@@ -2,12 +2,14 @@ package com.example.react_blog.service.implement;
 
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
 import com.example.react_blog.dto.response.ResponseDto;
+import com.example.react_blog.dto.response.board.GetBoardResponseDto;
 import com.example.react_blog.dto.response.board.PostBoardResponseDto;
 import com.example.react_blog.entity.BoardEntity;
 import com.example.react_blog.entity.ImageEntity;
 import com.example.react_blog.repository.BoardRepository;
 import com.example.react_blog.repository.ImageRepository;
 import com.example.react_blog.repository.UserRepository;
+import com.example.react_blog.repository.resultSet.GetBoardResultSet;
 import com.example.react_blog.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -56,5 +58,30 @@ public class BoardServiceImplement implements BoardService {
 
         return PostBoardResponseDto.success();
 
+    }
+
+    //게시글 불러오기
+    @Override
+    public ResponseEntity<? super GetBoardResponseDto> getBoard(Integer boardNumber) {
+        GetBoardResultSet resultSet= null;
+        List<ImageEntity> imageEntities = new ArrayList<>();
+
+        try {
+            resultSet = boardRepository.getBoard(boardNumber);
+            if (resultSet == null) return GetBoardResponseDto.notExistBoard();
+
+            imageEntities = imageRepository.findByBoardNumber(boardNumber);
+
+            //뷰카운트 증가
+            BoardEntity boardEntity = boardRepository.findByboardNumber(boardNumber);
+            boardEntity.increaseViewCount();
+            boardRepository.save(boardEntity);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return GetBoardResponseDto.success(resultSet,imageEntities);
     }
 }

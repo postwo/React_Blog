@@ -4,9 +4,12 @@ import com.example.react_blog.dto.request.board.PostBoardRequestDto;
 import com.example.react_blog.dto.response.ResponseDto;
 import com.example.react_blog.dto.response.board.GetBoardResponseDto;
 import com.example.react_blog.dto.response.board.PostBoardResponseDto;
+import com.example.react_blog.dto.response.board.PutFavoriteResponseDto;
 import com.example.react_blog.entity.BoardEntity;
+import com.example.react_blog.entity.FavoriteEntity;
 import com.example.react_blog.entity.ImageEntity;
 import com.example.react_blog.repository.BoardRepository;
+import com.example.react_blog.repository.FavoriteRepository;
 import com.example.react_blog.repository.ImageRepository;
 import com.example.react_blog.repository.UserRepository;
 import com.example.react_blog.repository.resultSet.GetBoardResultSet;
@@ -25,6 +28,7 @@ public class BoardServiceImplement implements BoardService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final ImageRepository imageRepository;
+    private final FavoriteRepository favoriteRepository;
 
     @Override
     public ResponseEntity<? super PostBoardResponseDto> postBoard(PostBoardRequestDto dto, String email) {
@@ -83,5 +87,38 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return GetBoardResponseDto.success(resultSet,imageEntities);
+    }
+
+    //좋아요
+    @Override
+    public ResponseEntity<? super PutFavoriteResponseDto> putFavorite(Integer boardNumber, String email) {
+
+        try {
+            boolean exitedUser = userRepository.existsByEmail(email);//존재하는지 유저 확인
+            if (!exitedUser) return PutFavoriteResponseDto.notExistUser();
+
+            BoardEntity boardEntity = boardRepository.findByboardNumber(boardNumber);
+            if (boardEntity == null) return PutFavoriteResponseDto.notExistBoard();
+
+            //좋아요 증가,감소
+            FavoriteEntity favoriteEntity = favoriteRepository.findByBoardNumberAndUserEmail(boardNumber,email);
+            if (favoriteEntity == null) {
+                favoriteEntity = new FavoriteEntity(email,boardNumber);
+                favoriteRepository.save(favoriteEntity);
+                boardEntity.increaseFavoriteCount();
+            }
+            else {
+                favoriteRepository.delete(favoriteEntity);
+                boardEntity.decreaseFavoriteCount();
+            }
+
+            boardRepository.save(boardEntity);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return PutFavoriteResponseDto.success();
     }
 }

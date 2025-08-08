@@ -3,6 +3,7 @@ package com.example.react_blog.controller;
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
 import com.example.react_blog.dto.response.board.GetBoardResponseDto;
 import com.example.react_blog.dto.response.board.PostBoardResponseDto;
+import com.example.react_blog.dto.response.board.PutFavoriteResponseDto;
 import com.example.react_blog.service.BoardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,16 @@ public class BoardController {
             @PathVariable("boardNumber") Integer boardNumber
     ){
         ResponseEntity<? super GetBoardResponseDto> response = boardService.getBoard(boardNumber);
+        return response;
+    }
+
+    //좋아요
+    @PutMapping("/{boardNumber}/favorite")
+    public ResponseEntity<? super PutFavoriteResponseDto> putFavorite(
+            @PathVariable("boardNumber") Integer boardNumber,
+            @AuthenticationPrincipal String email
+    ){
+        ResponseEntity<? super PutFavoriteResponseDto> response = boardService.putFavorite(boardNumber, email);
         return response;
     }
 }

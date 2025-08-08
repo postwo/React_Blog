@@ -27,4 +27,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity,Integer> {
     GetBoardResultSet getBoard(Integer boardNumber);
 
     BoardEntity findByboardNumber(Integer boardNumber);
+
+    // 게시물 있는지 확인
+    boolean existsByBoardNumber(Integer boardNumber);
 }

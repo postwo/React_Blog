@@ -4,6 +4,7 @@ package com.example.react_blog.service;
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
 import com.example.react_blog.dto.response.board.GetBoardResponseDto;
 import com.example.react_blog.dto.response.board.PostBoardResponseDto;
+import com.example.react_blog.dto.response.board.PutFavoriteResponseDto;
 import org.springframework.http.ResponseEntity;
 
 public interface BoardService {
@@ -12,4 +13,7 @@ public interface BoardService {
 
     //게시물 불러오기
     ResponseEntity<? super GetBoardResponseDto> getBoard(Integer boardNumber);
+
+    //좋아요
+    ResponseEntity<? super PutFavoriteResponseDto> putFavorite(Integer boardNumber, String email);
 }

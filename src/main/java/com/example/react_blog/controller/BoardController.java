@@ -2,6 +2,7 @@ package com.example.react_blog.controller;
 
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
 import com.example.react_blog.dto.response.board.GetBoardResponseDto;
+import com.example.react_blog.dto.response.board.GetFavoriteListResponseDto;
 import com.example.react_blog.dto.response.board.PostBoardResponseDto;
 import com.example.react_blog.dto.response.board.PutFavoriteResponseDto;
 import com.example.react_blog.service.BoardService;
@@ -44,6 +45,13 @@ public class BoardController {
             @AuthenticationPrincipal String email
     ){
         ResponseEntity<? super PutFavoriteResponseDto> response = boardService.putFavorite(boardNumber, email);
+        return response;
+    }
+
+    //좋아요 게시물
+    @GetMapping("/{boardNumber}/favorite-list")
+    public ResponseEntity<? super GetFavoriteListResponseDto> getFavoriteList(@PathVariable("boardNumber") Integer boardNumber) {
+        ResponseEntity<? super GetFavoriteListResponseDto> response = boardService.getFavoriteList(boardNumber);
         return response;
     }
 }

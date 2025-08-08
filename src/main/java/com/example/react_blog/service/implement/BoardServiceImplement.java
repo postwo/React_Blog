@@ -3,6 +3,7 @@ package com.example.react_blog.service.implement;
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
 import com.example.react_blog.dto.response.ResponseDto;
 import com.example.react_blog.dto.response.board.GetBoardResponseDto;
+import com.example.react_blog.dto.response.board.GetFavoriteListResponseDto;
 import com.example.react_blog.dto.response.board.PostBoardResponseDto;
 import com.example.react_blog.dto.response.board.PutFavoriteResponseDto;
 import com.example.react_blog.entity.BoardEntity;
@@ -13,6 +14,7 @@ import com.example.react_blog.repository.FavoriteRepository;
 import com.example.react_blog.repository.ImageRepository;
 import com.example.react_blog.repository.UserRepository;
 import com.example.react_blog.repository.resultSet.GetBoardResultSet;
+import com.example.react_blog.repository.resultSet.GetFavoriteListResultSet;
 import com.example.react_blog.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -120,5 +122,25 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return PutFavoriteResponseDto.success();
+    }
+
+    // 좋아요 게시물 가져오기
+    @Override
+    public ResponseEntity<? super GetFavoriteListResponseDto> getFavoriteList(Integer boardNumber) {
+
+        List<GetFavoriteListResultSet> resultSets = new ArrayList<>();
+
+        try {
+            boolean existedBoard = boardRepository.existsByBoardNumber(boardNumber);//존재하는지 게시물 확인
+            if (!existedBoard) return GetFavoriteListResponseDto.notExistBoard();
+
+            resultSets = favoriteRepository.getFavoriteList(boardNumber);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return GetFavoriteListResponseDto.success(resultSets);
     }
 }

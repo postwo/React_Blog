@@ -1,10 +1,8 @@
 package com.example.react_blog.controller;
 
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
-import com.example.react_blog.dto.response.board.GetBoardResponseDto;
-import com.example.react_blog.dto.response.board.GetFavoriteListResponseDto;
-import com.example.react_blog.dto.response.board.PostBoardResponseDto;
-import com.example.react_blog.dto.response.board.PutFavoriteResponseDto;
+import com.example.react_blog.dto.request.board.PostCommentRequestDto;
+import com.example.react_blog.dto.response.board.*;
 import com.example.react_blog.service.BoardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +50,17 @@ public class BoardController {
     @GetMapping("/{boardNumber}/favorite-list")
     public ResponseEntity<? super GetFavoriteListResponseDto> getFavoriteList(@PathVariable("boardNumber") Integer boardNumber) {
         ResponseEntity<? super GetFavoriteListResponseDto> response = boardService.getFavoriteList(boardNumber);
+        return response;
+    }
+
+    //댓글 작성
+    @PostMapping("/{boardNumber}/comment")
+    public ResponseEntity<? super PostCommentResponseDto> postComment(
+            @RequestBody @Valid PostCommentRequestDto requestBody,
+            @PathVariable("boardNumber") Integer boardNumber,
+            @AuthenticationPrincipal String email
+    ){
+        ResponseEntity<? super PostCommentResponseDto> response = boardService.postComment(requestBody, boardNumber, email);
         return response;
     }
 }

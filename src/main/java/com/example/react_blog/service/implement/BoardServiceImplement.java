@@ -1,18 +1,14 @@
 package com.example.react_blog.service.implement;
 
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
+import com.example.react_blog.dto.request.board.PostCommentRequestDto;
 import com.example.react_blog.dto.response.ResponseDto;
-import com.example.react_blog.dto.response.board.GetBoardResponseDto;
-import com.example.react_blog.dto.response.board.GetFavoriteListResponseDto;
-import com.example.react_blog.dto.response.board.PostBoardResponseDto;
-import com.example.react_blog.dto.response.board.PutFavoriteResponseDto;
+import com.example.react_blog.dto.response.board.*;
 import com.example.react_blog.entity.BoardEntity;
+import com.example.react_blog.entity.CommentEntity;
 import com.example.react_blog.entity.FavoriteEntity;
 import com.example.react_blog.entity.ImageEntity;
-import com.example.react_blog.repository.BoardRepository;
-import com.example.react_blog.repository.FavoriteRepository;
-import com.example.react_blog.repository.ImageRepository;
-import com.example.react_blog.repository.UserRepository;
+import com.example.react_blog.repository.*;
 import com.example.react_blog.repository.resultSet.GetBoardResultSet;
 import com.example.react_blog.repository.resultSet.GetFavoriteListResultSet;
 import com.example.react_blog.service.BoardService;
@@ -31,6 +27,7 @@ public class BoardServiceImplement implements BoardService {
     private final BoardRepository boardRepository;
     private final ImageRepository imageRepository;
     private final FavoriteRepository favoriteRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public ResponseEntity<? super PostBoardResponseDto> postBoard(PostBoardRequestDto dto, String email) {
@@ -142,5 +139,29 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return GetFavoriteListResponseDto.success(resultSets);
+    }
+
+    //댓글 작성
+    @Override
+    public ResponseEntity<? super PostCommentResponseDto> postComment(PostCommentRequestDto dto, Integer boardNumber ,String email) {
+        try{
+
+            BoardEntity boardEntity = boardRepository.findByboardNumber(boardNumber);//존재하는지 게시물 확인
+            if (boardEntity == null) return PostCommentResponseDto.notExistBoard();
+
+            boolean exitedUser = userRepository.existsByEmail(email);//존재하는지 유저 확인
+            if (!exitedUser) return PostCommentResponseDto.notExistUser();
+
+            CommentEntity commentEntity = new CommentEntity(dto,boardNumber,email);
+            commentRepository.save(commentEntity);
+
+            boardEntity.increaseCommentCount();
+            boardRepository.save(boardEntity);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return PostCommentResponseDto.success();
     }
 }

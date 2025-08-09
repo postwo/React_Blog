@@ -13,6 +13,8 @@ public interface FavoriteRepository extends JpaRepository<FavoriteEntity, Favori
     FavoriteEntity findByBoardNumberAndUserEmail(Integer boardNumber,String userEmail);
 
     // 게시물 좋아요 리스트 가져오기
+    // as 에 작성한 거랑 GetFavoriteListResultSet 에서 작서한 필드들하고
+    // get빼고 똑같이 해야 데이터를 잘 받아온다(중요)
     @Query(
             value=
             "select " +

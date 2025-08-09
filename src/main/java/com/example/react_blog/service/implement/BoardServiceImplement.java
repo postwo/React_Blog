@@ -10,6 +10,7 @@ import com.example.react_blog.entity.FavoriteEntity;
 import com.example.react_blog.entity.ImageEntity;
 import com.example.react_blog.repository.*;
 import com.example.react_blog.repository.resultSet.GetBoardResultSet;
+import com.example.react_blog.repository.resultSet.GetCommentListResultSet;
 import com.example.react_blog.repository.resultSet.GetFavoriteListResultSet;
 import com.example.react_blog.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -163,5 +164,24 @@ public class BoardServiceImplement implements BoardService {
             return ResponseDto.databaseError();
         }
         return PostCommentResponseDto.success();
+    }
+
+    //댓글 불러오기
+    @Override
+    public ResponseEntity<? super GetCommentListResponseDto> getCommentList(Integer boardNumber) {
+
+        List<GetCommentListResultSet> resultSets = new ArrayList<>();
+
+        try {
+            boolean existedBoard = boardRepository.existsByBoardNumber(boardNumber);//존재하는지 게시물 확인
+            if (!existedBoard) return GetCommentListResponseDto.notExistBoard();
+
+            resultSets = commentRepository.getCommentList(boardNumber);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return GetCommentListResponseDto.success(resultSets);
     }
 }

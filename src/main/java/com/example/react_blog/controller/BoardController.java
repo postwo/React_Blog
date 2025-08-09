@@ -63,4 +63,11 @@ public class BoardController {
         ResponseEntity<? super PostCommentResponseDto> response = boardService.postComment(requestBody, boardNumber, email);
         return response;
     }
+
+    //댓글 불러오기
+    @GetMapping("/{boardNumber}/comment-list")
+    public ResponseEntity<? super GetCommentListResponseDto> getCommentList(@PathVariable("boardNumber") Integer boardNumber) {
+        ResponseEntity<? super GetCommentListResponseDto> response = boardService.getCommentList(boardNumber);
+        return response;
+    }
 }

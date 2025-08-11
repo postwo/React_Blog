@@ -70,4 +70,11 @@ public class BoardController {
         ResponseEntity<? super GetCommentListResponseDto> response = boardService.getCommentList(boardNumber);
         return response;
     }
+
+    //카운트 증가 api (이걸 만든 이유는 react에서 상세 페이지를 한버만 들어갔는데 뷰카운트가 4씩 증가 하는 현상을 막기 위해 구현)
+    @GetMapping("/{boardNumber}/increase-view-count")
+    public ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(@PathVariable("boardNumber") Integer boardNumber) {
+        ResponseEntity<? super IncreaseViewCountResponseDto> response = boardService.increaseViewCount(boardNumber);
+        return response;
+    }
 }

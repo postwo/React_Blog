@@ -76,11 +76,6 @@ public class BoardServiceImplement implements BoardService {
 
             imageEntities = imageRepository.findByBoardNumber(boardNumber);
 
-            //뷰카운트 증가
-            BoardEntity boardEntity = boardRepository.findByboardNumber(boardNumber);
-            boardEntity.increaseViewCount();
-            boardRepository.save(boardEntity);
-
         }catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
@@ -183,5 +178,22 @@ public class BoardServiceImplement implements BoardService {
             return ResponseDto.databaseError();
         }
         return GetCommentListResponseDto.success(resultSets);
+    }
+
+    //뷰카운트
+    @Override
+    public ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(Integer boardNumber) {
+        try {
+            //뷰카운트 증가
+            BoardEntity boardEntity = boardRepository.findByboardNumber(boardNumber);
+            if (boardEntity == null) return IncreaseViewCountResponseDto.notExistBoard();
+            boardEntity.increaseViewCount();
+            boardRepository.save(boardEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return IncreaseViewCountResponseDto.success();
     }
 }

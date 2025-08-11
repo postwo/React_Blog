@@ -24,4 +24,7 @@ public interface BoardService {
 
     //댓글 불러오기
     ResponseEntity<? super GetCommentListResponseDto> getCommentList(Integer boardNumber);
+
+    // 뷰카운트
+    ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(Integer boardNumber);
 }

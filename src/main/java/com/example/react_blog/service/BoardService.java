@@ -27,4 +27,7 @@ public interface BoardService {
 
     // 뷰카운트
     ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(Integer boardNumber);
+
+    // 게시물 삭제
+    ResponseEntity<? super DeleteBoardResponseDto> deleteBoard(Integer boardNumber, String email);
 }

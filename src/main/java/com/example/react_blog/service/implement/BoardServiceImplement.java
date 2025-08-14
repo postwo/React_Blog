@@ -196,4 +196,37 @@ public class BoardServiceImplement implements BoardService {
 
         return IncreaseViewCountResponseDto.success();
     }
+
+    //게시물 삭제
+    @Override
+    public ResponseEntity<? super DeleteBoardResponseDto> deleteBoard(Integer boardNumber, String email) {
+
+        try {
+            boolean exitedUser = userRepository.existsByEmail(email);//존재하는지 유저 확인
+            if (!exitedUser) return DeleteBoardResponseDto.notExistUser();
+
+            BoardEntity boardEntity = boardRepository.findByboardNumber(boardNumber);
+            if (boardEntity == null) return DeleteBoardResponseDto.notExistBoard(); //게시물 없음
+
+            // 글 작성자가 맞는지 확인
+            String writerEmail = boardEntity.getWriterEmail();
+            boolean isWriter = writerEmail.equals(email);
+            if (!isWriter) return DeleteBoardResponseDto.noPermission();
+
+            //게시물 삭제
+            imageRepository.deleteByBoardNumber(boardNumber);
+            commentRepository.deleteByBoardNumber(boardNumber);
+            favoriteRepository.deleteByBoardNumber(boardNumber);
+
+            boardRepository.delete(boardEntity);
+
+
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return DeleteBoardResponseDto.success();
+    }
 }

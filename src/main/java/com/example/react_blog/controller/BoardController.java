@@ -60,6 +60,7 @@ public class BoardController {
             @PathVariable("boardNumber") Integer boardNumber,
             @AuthenticationPrincipal String email
     ){
+        System.out.println("들어가요");
         ResponseEntity<? super PostCommentResponseDto> response = boardService.postComment(requestBody, boardNumber, email);
         return response;
     }
@@ -67,7 +68,7 @@ public class BoardController {
     //댓글 불러오기
     @GetMapping("/{boardNumber}/comment-list")
     public ResponseEntity<? super GetCommentListResponseDto> getCommentList(@PathVariable("boardNumber") Integer boardNumber) {
-        ResponseEntity<? super GetCommentListResponseDto> response = boardService.getCommentList(boardNumber);
+        ResponseEntity<? super GetCommentListResponseDto> response = boardService.getCommentList(boardNumber);  
         return response;
     }
 
@@ -75,6 +76,16 @@ public class BoardController {
     @GetMapping("/{boardNumber}/increase-view-count")
     public ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(@PathVariable("boardNumber") Integer boardNumber) {
         ResponseEntity<? super IncreaseViewCountResponseDto> response = boardService.increaseViewCount(boardNumber);
+        return response;
+    }
+
+    //게시글 삭제
+    @DeleteMapping("/{boardNumber}")
+    public ResponseEntity<? super DeleteBoardResponseDto> deleteBoard(
+            @PathVariable("boardNumber") Integer boardNumber,
+            @AuthenticationPrincipal String email
+    ){
+        ResponseEntity<? super DeleteBoardResponseDto> response = boardService.deleteBoard(boardNumber, email);
         return response;
     }
 }

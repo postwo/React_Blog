@@ -1,5 +1,6 @@
 package com.example.react_blog.service.implement;
 
+import com.example.react_blog.dto.request.board.PatchBoardRequestDto;
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
 import com.example.react_blog.dto.request.board.PostCommentRequestDto;
 import com.example.react_blog.dto.response.ResponseDto;
@@ -228,5 +229,45 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return DeleteBoardResponseDto.success();
+    }
+
+    //게시글 수정
+    @Override
+    public ResponseEntity<? super PatchBoardResponseDto> patchBoard(PatchBoardRequestDto dto, Integer boardNumber, String email) {
+
+        try{
+
+            BoardEntity boardEntity = boardRepository.findByboardNumber(boardNumber);
+            if (boardEntity == null) return PatchBoardResponseDto.notExistBoard(); //게시물 없음
+
+            boolean exitedUser = userRepository.existsByEmail(email);//존재하는지 유저 확인
+            if (!exitedUser) return PatchBoardResponseDto.notExistUser();
+
+            // 권한
+            String wirterEmail = boardEntity.getWriterEmail();
+            boolean isWriter = wirterEmail.equals(email);
+            if (!isWriter) return PatchBoardResponseDto.noPermission();
+
+            boardEntity.patchBoard(dto);
+            boardRepository.save(boardEntity);
+
+            imageRepository.deleteByBoardNumber(boardNumber);
+            List<String> boardImageList = dto.getBoardImageList();
+            List<ImageEntity> imageEntities = new ArrayList<>();
+
+            for (String image : boardImageList) {
+                ImageEntity imageEntity = new ImageEntity(boardNumber, image);
+                imageEntities.add(imageEntity);
+            }
+
+            imageRepository.saveAll(imageEntities);
+
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return PatchBoardResponseDto.success();
     }
 }

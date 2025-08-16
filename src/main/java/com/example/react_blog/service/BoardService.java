@@ -1,6 +1,7 @@
 package com.example.react_blog.service;
 
 
+import com.example.react_blog.dto.request.board.PatchBoardRequestDto;
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
 import com.example.react_blog.dto.request.board.PostCommentRequestDto;
 import com.example.react_blog.dto.response.board.*;
@@ -30,4 +31,7 @@ public interface BoardService {
 
     // 게시물 삭제
     ResponseEntity<? super DeleteBoardResponseDto> deleteBoard(Integer boardNumber, String email);
+
+    // 게시물 수정
+    ResponseEntity<? super PatchBoardResponseDto> patchBoard(PatchBoardRequestDto dto, Integer boardNumber, String email);
 }

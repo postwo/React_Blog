@@ -1,5 +1,6 @@
 package com.example.react_blog.entity;
 
+import com.example.react_blog.dto.request.board.PatchBoardRequestDto;
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -66,4 +67,8 @@ public class BoardEntity {
         this.commentCount ++;
     }
 
+    public void patchBoard(PatchBoardRequestDto dto){
+        this.title=dto.getTitle();
+        this.content=dto.getContent();
+    }
 }

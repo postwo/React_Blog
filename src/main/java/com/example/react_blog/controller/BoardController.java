@@ -1,5 +1,6 @@
 package com.example.react_blog.controller;
 
+import com.example.react_blog.dto.request.board.PatchBoardRequestDto;
 import com.example.react_blog.dto.request.board.PostBoardRequestDto;
 import com.example.react_blog.dto.request.board.PostCommentRequestDto;
 import com.example.react_blog.dto.response.board.*;
@@ -86,6 +87,17 @@ public class BoardController {
             @AuthenticationPrincipal String email
     ){
         ResponseEntity<? super DeleteBoardResponseDto> response = boardService.deleteBoard(boardNumber, email);
+        return response;
+    }
+
+    //게시물 수정
+    @PatchMapping("/{boardNumber}")
+    public ResponseEntity<? super PatchBoardResponseDto> patchBoard(
+            @PathVariable("boardNumber") Integer boardNumber,
+            @RequestBody @Valid PatchBoardRequestDto requestBody,
+            @AuthenticationPrincipal String email
+    ){
+        ResponseEntity<? super PatchBoardResponseDto> response = boardService.patchBoard(requestBody,boardNumber, email);
         return response;
     }
 }

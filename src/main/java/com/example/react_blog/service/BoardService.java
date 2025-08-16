@@ -34,4 +34,7 @@ public interface BoardService {
 
     // 게시물 수정
     ResponseEntity<? super PatchBoardResponseDto> patchBoard(PatchBoardRequestDto dto, Integer boardNumber, String email);
+
+    // 최신 게시물 리스트
+    ResponseEntity<? super GetLatestBoardListResponseDto> getLatestBoardList();
 }

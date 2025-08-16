@@ -5,10 +5,7 @@ import com.example.react_blog.dto.request.board.PostBoardRequestDto;
 import com.example.react_blog.dto.request.board.PostCommentRequestDto;
 import com.example.react_blog.dto.response.ResponseDto;
 import com.example.react_blog.dto.response.board.*;
-import com.example.react_blog.entity.BoardEntity;
-import com.example.react_blog.entity.CommentEntity;
-import com.example.react_blog.entity.FavoriteEntity;
-import com.example.react_blog.entity.ImageEntity;
+import com.example.react_blog.entity.*;
 import com.example.react_blog.repository.*;
 import com.example.react_blog.repository.resultSet.GetBoardResultSet;
 import com.example.react_blog.repository.resultSet.GetCommentListResultSet;
@@ -30,6 +27,7 @@ public class BoardServiceImplement implements BoardService {
     private final ImageRepository imageRepository;
     private final FavoriteRepository favoriteRepository;
     private final CommentRepository commentRepository;
+    private final BoardListViewRepository boardListViewRepository;
 
     @Override
     public ResponseEntity<? super PostBoardResponseDto> postBoard(PostBoardRequestDto dto, String email) {
@@ -269,5 +267,23 @@ public class BoardServiceImplement implements BoardService {
         }
 
         return PatchBoardResponseDto.success();
+    }
+
+    // 최신 게시물 리스트
+    @Override
+    public ResponseEntity<? super GetLatestBoardListResponseDto> getLatestBoardList() {
+
+        List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+
+        try {
+
+            boardListViewEntities = boardListViewRepository.findByOrderByWriteDatetimeDesc();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return GetLatestBoardListResponseDto.success(boardListViewEntities);
     }
 }

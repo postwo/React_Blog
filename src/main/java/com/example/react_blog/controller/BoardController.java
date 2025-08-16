@@ -100,4 +100,11 @@ public class BoardController {
         ResponseEntity<? super PatchBoardResponseDto> response = boardService.patchBoard(requestBody,boardNumber, email);
         return response;
     }
+
+    //최신 게시물 리스트
+    @GetMapping("/latest-list")
+    public ResponseEntity<? super GetLatestBoardListResponseDto> getLatestBoardList() {
+        ResponseEntity<? super GetLatestBoardListResponseDto> response = boardService.getLatestBoardList();
+        return response;
+    }
 }
